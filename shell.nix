@@ -1,4 +1,11 @@
-{ pkgs ? import <nixpkgs> { overlays = [(import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))]; }, personal ? import <personal> { inherit pkgs; } }:
+{ pkgs ? import <nixpkgs> {
+    overlays = [
+      (import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))
+    ];
+  }
+  # personal => https://github.com/dblanovschi/nix-channel
+, personal ? import <personal> { inherit pkgs; }
+}:
 
 with personal.toolchainCommons;
 personal.mkShell {
