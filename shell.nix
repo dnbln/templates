@@ -1,12 +1,14 @@
-{ pkgs ? import <nixpkgs> { overlays = (import ./nix/overlays.nix); } }:
+{ pkgs ? import <nixpkgs> { overlays = [(import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))]; }, personal ? import <personal> { inherit pkgs; } }:
 
-import ./nix/shell.nix {
-  inherit pkgs;
-
+with personal.toolchainCommons;
+personal.mkShell {
   # which toolchain?
   # valid values are "nightly", "nightly-musl", "stable", "stable-musl"
+  # but you can build your own, with '{toolchain = nightly; target = targets.musl;}'
+  # for example (same thing)
+  #
   # default: "nightly-musl"
-  toolchain-name = "nightly-musl";
+  toolchain = "nightly-musl";
 
   # any extra nativeBuildInputs ?
   # default = []
