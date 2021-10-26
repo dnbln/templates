@@ -1,31 +1,32 @@
-{ pkgs ? import <nixpkgs> {
+{ utils ? import ./utils.nix
+, pkgs ? import <nixpkgs> {
     overlays = [
-      (import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz"))
+      (utils.importRepo { user = "oxalica"; repo = "rust-overlay"; branch = "master"; })
     ];
   }
-  # personal => https://github.com/dblanovschi/nix-channel
-, personal ? import <personal> { inherit pkgs; }
 }:
 
-with personal.toolchainCommons;
-personal.mkShell {
+let
+  thor = utils.importRepo { user = "dblanovschi"; repo = "thor"; } { inherit pkgs; };
+in
+with thor.toolchainCommons;
+thor.mkRustShell {
   # which toolchain?
   # valid values are "nightly", "nightly-musl", "stable", "stable-musl"
-  # but you can build your own, with '{toolchain = nightly; target = targets.musl;}'
-  # for example (same thing)
+  # but you can build your own, with `{toolchain = nightly; target = targets.musl;}`
+  # for example (same thing; `nightly` and `targets` come from thor.toolchainCommons)
   #
   # default: "nightly-musl"
   toolchain = "nightly-musl";
 
   # any extra nativeBuildInputs ?
   # default = []
-  extraNativeBuildInputs = [];
+  extraNativeBuildInputs = [ ];
 
   # any extra buildInputs ?
   # default = []
   extraBuildInputs = [
-    # say you need openssl
-    pkgs.openssl
+    pkgs.nixpkgs-fmt
   ];
 
   # some shell code to run right before setting up cargo's env variables
