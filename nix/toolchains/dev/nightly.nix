@@ -1,12 +1,7 @@
-{ pkgs, commons ? import ../commons.nix { inherit pkgs; } }:
+{ pkgs, dev-commons ? import ./dev-commons.nix { inherit pkgs; } }:
 
-rec {
-  target = commons.gnu-target;
-
-  toolchain = commons.nightly commons.default {
-    extensions = [ "rust-src" ];
-    targets = [ target ];
-  };
-
-  isNightly = true;
+with dev-commons.commons;
+dev-commons.createToolchain {
+  target = targets.gnu;
+  toolchain = nightly;
 }

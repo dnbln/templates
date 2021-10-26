@@ -1,10 +1,11 @@
 { pkgs
 , lib ? pkgs.lib
-, toolchain-name ? "stable"
+, toolchain-name ? "nightly-musl"
 , extraNativeBuildInputs ? [ ]
 , extraBuildInputs ? [ ]
 , preCargoSetup ? ""
 , postCargoSetup ? ""
+, setupCargoEnv ? true
 , uselld ? true
 , enableNightlyOpts ? true
 }:
@@ -20,6 +21,7 @@ let
     target = toolchain.target;
     isNightly = toolchain.isNightly;
   });
+  cargoEnvSetupSh = if setupCargoEnv then env-commons.setup else "";
 in
 pkgs.mkShell {
   nativeBuildInputs = [
@@ -27,11 +29,12 @@ pkgs.mkShell {
   ] ++ extraNativeBuildInputs
   ++ lib.optionals uselld [
     pkgs.clang_12
+    pkgs.lld_12
   ];
 
   buildInputs = [
     pkgs.nixpkgs-fmt
   ] ++ extraBuildInputs;
 
-  shellHook = preCargoSetup + env-commons.setup + postCargoSetup;
+  shellHook = preCargoSetup + cargoEnvSetupSh + postCargoSetup;
 }

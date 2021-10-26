@@ -1,11 +1,7 @@
-{ pkgs, commons ? import ../commons.nix { inherit pkgs; } }:
+{ pkgs, build-commons ? import ./build-commons.nix { inherit pkgs; } }:
 
-rec {
-  target = commons.musl-target;
-
-  toolchain = commons.stable commons.minimal {
-    targets = [ target ];
-  };
-
-  isNightly = false;
+with build-commons.commons;
+build-commons.createToolchain {
+  target = targets.musl;
+  toolchain = stable;
 }

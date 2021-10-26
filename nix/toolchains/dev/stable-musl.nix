@@ -1,12 +1,7 @@
-{ pkgs, commons ? import ../commons.nix { inherit pkgs; } }:
+{ pkgs, dev-commons ? import ./dev-commons.nix { inherit pkgs; } }:
 
-rec {
-  target = commons.musl-target;
-
-  toolchain = commons.stable commons.default {
-    extensions = [ "rust-src" ];
-    targets = [ target ];
-  };
-
-  isNightly = false;
+with dev-commons.commons;
+dev-commons.createToolchain {
+  target = targets.musl;
+  toolchain = stable;
 }

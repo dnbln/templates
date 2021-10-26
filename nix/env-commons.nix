@@ -7,7 +7,8 @@
 }:
 
 let
-  tt = toolchain-utils.targetTripleEnv target;
+  t = target.targetTriple;
+  TT = toolchain-utils.targetTripleEnv t;
   useNightlyOpts = isNightly && enableNightlyOpts;
 
   linkerRustFlags = lld: lib.optionals lld [ "-Clink-arg=-fuse-ld=lld" ];
@@ -18,13 +19,13 @@ let
   rustFlagsStr = { lld, nightlyOpts }: builtins.concatStringsSep " " (rustFlags { inherit lld nightlyOpts; });
 
   cargoSetupList = [
-    ''export CARGO_BUILD_TARGET="${target}"''
+    ''export CARGO_BUILD_TARGET="${t}"''
   ]
   ++ lib.optionals uselld [
-    ''export CARGO_TARGET_${tt}_LINKER="clang"''
+    ''export CARGO_TARGET_${TT}_LINKER="clang"''
   ]
   ++ [
-    ''export CARGO_TARGET_${tt}_RUSTFLAGS="${
+    ''export CARGO_TARGET_${TT}_RUSTFLAGS="${
         rustFlagsStr {
           lld = uselld;
           nightlyOpts = useNightlyOpts;
