@@ -7,14 +7,15 @@
 }:
 
 let
-  thor = utils.importRepo { user = "dblanovschi"; repo = "thor"; } { inherit pkgs; };
+  thorConfig = import ./thor-config.nix;
+  thor = utils.importRepo { user = "dblanovschi"; repo = "thor"; } { inherit pkgs; config = thorConfig; };
 in
-with thor.toolchainCommons;
-thor.mkRustShell {
+with thor.rust.toolchainCommons;
+thor.rust.mkRustShell {
   # which toolchain?
   # valid values are "nightly", "nightly-musl", "stable", "stable-musl"
   # but you can build your own, with `{toolchain = nightly; target = targets.musl;}`
-  # for example (same thing; `nightly` and `targets` come from thor.toolchainCommons)
+  # for example (same thing; `nightly` and `targets` come from thor.rust.toolchainCommons)
   #
   # default: "nightly-musl"
   toolchain = "nightly-musl";
